@@ -22,19 +22,26 @@
       />
       <div style="margin: 16px">
         <van-button block type="info" native-type="submit">
-          提交
+          登录
         </van-button>
       </div>
+
+      <p class="tips">没有账号？去<router-link to='/register'>注册</router-link></p>
     </van-form>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 export default {
+  created () {
+    const { username, password } = this.$route.params
+    this.username = username
+    this.password = password
+  },
   methods: {
     async login () {
-      const res = await axios.post('http://localhost:3000/login', {
+      const res = await this.$axios.post('/login', {
         username: this.username,
         password: this.password
       })
@@ -43,6 +50,12 @@ export default {
       if (statusCode === 200) {
         // 在组件中必须 this.$toast才能使用
         this.$toast.success(message)
+        // 保存token
+        // 跳转到个人中心
+        // this.$router.push('/user')
+        this.$router.push({
+          path: '/user'
+        })
       } else {
         this.$toast.fail('登录失败')
       }
@@ -67,6 +80,18 @@ export default {
 }
 </script>
 
-<style lang="less">
-
+<style lang="less" scoped>
+// lang: 用于指定css语言  lang='less scss css'
+// scoped: 作用域  当前组件的样式带了scoped，这个样式只会在当前组件生效
+// scoped的原理
+//  1.给当前模板中的所有的元素都添加一个特殊的属性 data-v-xxxx
+//  2.给当前组件的样式中的所以的选择器增加一个属性选择器 div[data-v-xxxx] .tip[data-v-xxx]
+  .tips {
+    padding: 15px;
+    font-size: 14px;
+    text-align: right;
+    a {
+      color: orangered;
+    }
+  }
 </style>
